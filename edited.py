@@ -1,25 +1,22 @@
 import numpy as np
 import pandas as pd
-##############################################
 
-profit_df = pd.read_excel(r"D:\New folder (2)\profito.xlsx")
-
-path_to_item_file = r"D:\New folder (2)\item_data.xlsx"
-path_to_item_file2 = r'D:\New folder (2)\item_df.xlsx'
+path_to_item_file = r"D:\result\FILES\item_data.xlsx"
+path_to_item_file2 = r"D:\result\FILES\item_df.xlsx"
 item_df = pd.read_excel(path_to_item_file)
 item_df2 = pd.read_excel(path_to_item_file2)
 
 item_df.columns = ['Text139', 'barcode', 'item', 'quntity', 'typo', 'SLS_UNT', 'PRC1', 'PRC2']
-item_df = item_df.drop(['SLS_UNT', 'PRC1', 'PRC2', 'Text139'], axis=1)
+
 item_df = item_df.dropna(subset=['item', 'quntity']).reset_index(drop=True)
 
 
-def ADD_ZERO(df, codel_col):
+def add_left_zero(df, codel_col):
     df[codel_col] = '0' + df[codel_col].astype('int32').astype('str')
 
 
-ADD_ZERO(item_df2, 'code')
-ADD_ZERO(item_df, 'barcode')
+add_left_zero(item_df2, 'code')
+add_left_zero(item_df, 'barcode')
 
 
 def slice_barcode(df, new_column,thebarcode ,x, y, postion=0):
@@ -61,14 +58,11 @@ item_df['Libra officer'] = np.where((item_df['barcode_T2'].astype(str).str.conta
                                                               12.5
                                                               , 1))))))))
 
-# item_df.to_excel('items.xlsx')
-# item_df.to_excel(r"D:\result\result.xlsx",sheet_name='items_base')
 
 ##########################
 test = pd.read_excel(r"D:\result\FILES\ALL_ABOUT.xlsx")
 "clean the data"
 test = test.dropna(axis='columns', how="all")
-test['tr_dt'] = pd.to_datetime(test['tr_dt'], format="m-d-yyyy")
 test.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
                 'value', 'tax', 'discount', 'unitprice',
                 'quantity', 'type', 'invoive_type',
@@ -99,7 +93,7 @@ sellvalue = sellvalue.drop(['tax'],axis=1).reset_index(drop=True)
 
 
 ############################
-clints_df = pd.read_excel(r"C:\Users\mohamed\Desktop\newnew.xlsx")
+clints_df = pd.read_excel(r"D:\result\FILES\newnew.xlsx")
 clints_df = clints_df.replace(r'^\s*$', np.nan, regex=True)
 clints_df.drop(clints_df.index[clints_df['acc_nm'].isnull() ], inplace = True)
 
@@ -128,7 +122,7 @@ clints_df.columns = ['index', 'empty1', 'empty2', 'code','acc_nm','mony_forus','
 
 clints_df["max_time"]=clints_df["max_time"].astype("int32")
 
-acc_stat = pd.read_excel(r"C:\Users\mohamed\Desktop\CCCCCCCCCC.xlsx")
+acc_stat = pd.read_excel(r"D:\result\FILES\CCCCCCCCCC.xlsx")
 acc_stat.drop(['Text139', 'نص204'], axis=1)
 clints_df['acc_nm'] = clints_df['acc_nm'].fillna(0)
 
@@ -146,24 +140,12 @@ give_name_for_NAN_in_another_col(acc_stat,'TR_DS','ماقبله','RACC',clints_d
 'replace np.nat with 0'
 acc_stat['tr_dt'] = acc_stat['tr_dt'].replace(np.nan, "30/12/2022 00:00:00")
 
-
-
-
-# j=-1
-# for i in range(0, acc_stat.shape[0]):
-#     if acc_stat.loc[i, 'TR_DS']=="ماقبله" :
-#         j=j+1
-#         acc_stat.loc[i, 'RACC']=clints_df.loc[j,'acc_nm']
-#         acc_stat.loc[i, 'tr_dt']="30/12/2022 09:00:00"
-#     else:
-#         acc_stat.loc[i, 'RACC'] = clints_df.loc[j,'acc_nm']
-
-
 acc_stat['tr_dt'] = pd.to_datetime(acc_stat['tr_dt'], errors='coerce')
 
 acc_stat["days"]=acc_stat["tr_dt"].dt.day
 
 acc_stat = acc_stat.merge(clints_df, left_on='RACC', right_on='acc_nm', how='left',suffixes=('_x', '_y'))
+
 acc_stat = acc_stat.merge(main_clint_df_t4, left_on='RACC', right_on='acc_nm', how='left',suffixes=('_x', '_y'))
 
 acc_stat['Libra'] = np.where((acc_stat['TR_DS'].astype(str).str.contains(r"مدين|دائن"))
@@ -210,18 +192,13 @@ sellvalue['Profit Percentage(value)'] = np.where((sellvalue['invoive_type'].str.
 
 
 #############################
+import numpy as np
+import pandas as pd
 
-
-
-
-
-budget = pd.read_excel(r"D:\New folder (2)\helo.xlsx")
-budget = budget.replace(r'^\s*$', np.nan, regex=True)
-budget['Acc_cd'] = budget['Acc_cd'].replace(r'[\u0600-\u06FF]|^\s*$', np.nan, regex=True)
-
+budget = pd.read_excel(r"D:\result\FILES\helo.xlsx")
+budget['Acc_cd'] = budget['Acc_cd'].replace(r'[^0-9]', np.nan, regex=True)
 budget = budget.dropna(subset=['Acc_cd']).reset_index(drop=True)
 budget['Acc_cd'] = budget['Acc_cd'].astype('int32').astype('str')
-
 
 slice_barcode(budget,'minat1','Acc_cd',0,1,0)
 slice_barcode(budget,'minat2','Acc_cd',0,2,1)
@@ -240,10 +217,7 @@ def all_nonblanck_down(df, column):
             h = df.loc[i, column]
         else:
             df.loc[i, column] = h
-
-
-
-
+    return df
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat1','minat1_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat2','minat2_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
@@ -251,7 +225,6 @@ codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
 
-budget = budget.dropna(subset=['Acc_cd']).reset_index(drop=True)
 
 all_nonblanck_down(budget, 'minat1_name')
 all_nonblanck_down(budget, 'minat2_name')
@@ -261,14 +234,12 @@ all_nonblanck_down(budget, 'minat6_name')
 all_nonblanck_down(budget, 'minat8_name')
 
 budget.drop(budget.columns[[0,1,2,3,4,5,6,7,8,9,10,11,12,13]], axis=1, inplace=True)
-budget = budget[(budget['minat3_name'] !=budget['minat8_name'])| (budget['Acc_cd'] =='402')|(budget['Acc_cd'] =='403')|(budget['Acc_cd'] =='401')]
-budget.columns = budget.columns.str.replace('DbBal', 'الحركة مدين')
-budget.columns = budget.columns.str.replace('CrBal', 'الحركة دائن')
-budget.columns = budget.columns.str.replace('Label113', 'مدين نهاية المدة ')
-budget.columns = budget.columns.str.replace('Text153', 'مدين أول المدة ')
-budget.columns = budget.columns.str.replace('Text154', 'دائن اول  المدة ')
-budget.columns = budget.columns.str.replace('Text161', 'دائن اخر المدة')
-
+budget.rename(columns = {'DbBal':'الحركة مدين', 
+                         'CrBal':'الحركة دائن', 
+                         'Label113':'مدين نهاية المدة ', 
+                         'Text153':'مدين أول المدة ',
+                         'Text154':'دائن اول  المدة ',
+                         'Text161': 'دائن اخر المدة'}, inplace = True)
 
 
 
@@ -279,14 +250,8 @@ budget.columns = budget.columns.str.replace('Text161', 'دائن اخر المد
 
 ##############################
 
-
-# item_df.to_excel(r"D:\result\result.xlsx",sheet_name='items_base')
-# accstat_df.to_excel(r"D:\result\result.xlsx", sheet_name='account statement')
-# profit_df.to_excel(r"D:\result\result.xlsx",sheet_name='profito')
 with pd.ExcelWriter(r"D:\result\result.xlsx") as writer:
     item_df.to_excel(writer, sheet_name='items_base')
-   # accstat_df.to_excel(writer, sheet_name='account statement')
-  #  profit_df.to_excel(writer, sheet_name='profito')
     buyvaluedf.to_excel(writer, sheet_name='buyvaluedf')
     sellvalue.to_excel(writer, sheet_name='sellvalue')
     main_clint_df_t4.to_excel(writer, sheet_name='clint_database')
