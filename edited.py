@@ -1,8 +1,5 @@
 import numpy as np
 import pandas as pd
-##############################################
-
-profit_df = pd.read_excel(r"D:\New folder (2)\profito.xlsx")
 
 path_to_item_file = r"D:\New folder (2)\item_data.xlsx"
 path_to_item_file2 = r'D:\New folder (2)\item_df.xlsx'
