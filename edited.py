@@ -7,16 +7,16 @@ item_df = pd.read_excel(path_to_item_file)
 item_df2 = pd.read_excel(path_to_item_file2)
 
 item_df.columns = ['Text139', 'barcode', 'item', 'quntity', 'typo', 'SLS_UNT', 'PRC1', 'PRC2']
-item_df = item_df.drop(['SLS_UNT', 'PRC1', 'PRC2', 'Text139'], axis=1)
+
 item_df = item_df.dropna(subset=['item', 'quntity']).reset_index(drop=True)
 
 
-def ADD_ZERO(df, codel_col):
+def add_left_zero(df, codel_col):
     df[codel_col] = '0' + df[codel_col].astype('int32').astype('str')
 
 
-ADD_ZERO(item_df2, 'code')
-ADD_ZERO(item_df, 'barcode')
+add_left_zero(item_df2, 'code')
+add_left_zero(item_df, 'barcode')
 
 
 def slice_barcode(df, new_column,thebarcode ,x, y, postion=0):
@@ -58,14 +58,11 @@ item_df['Libra officer'] = np.where((item_df['barcode_T2'].astype(str).str.conta
                                                               12.5
                                                               , 1))))))))
 
-# item_df.to_excel('items.xlsx')
-# item_df.to_excel(r"D:\result\result.xlsx",sheet_name='items_base')
 
 ##########################
 test = pd.read_excel(r"D:\result\FILES\ALL_ABOUT.xlsx")
 "clean the data"
 test = test.dropna(axis='columns', how="all")
-test['tr_dt'] = pd.to_datetime(test['tr_dt'], format="m-d-yyyy")
 test.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
                 'value', 'tax', 'discount', 'unitprice',
                 'quantity', 'type', 'invoive_type',
@@ -143,24 +140,12 @@ give_name_for_NAN_in_another_col(acc_stat,'TR_DS','ماقبله','RACC',clints_d
 'replace np.nat with 0'
 acc_stat['tr_dt'] = acc_stat['tr_dt'].replace(np.nan, "30/12/2022 00:00:00")
 
-
-
-
-# j=-1
-# for i in range(0, acc_stat.shape[0]):
-#     if acc_stat.loc[i, 'TR_DS']=="ماقبله" :
-#         j=j+1
-#         acc_stat.loc[i, 'RACC']=clints_df.loc[j,'acc_nm']
-#         acc_stat.loc[i, 'tr_dt']="30/12/2022 09:00:00"
-#     else:
-#         acc_stat.loc[i, 'RACC'] = clints_df.loc[j,'acc_nm']
-
-
 acc_stat['tr_dt'] = pd.to_datetime(acc_stat['tr_dt'], errors='coerce')
 
 acc_stat["days"]=acc_stat["tr_dt"].dt.day
 
 acc_stat = acc_stat.merge(clints_df, left_on='RACC', right_on='acc_nm', how='left',suffixes=('_x', '_y'))
+
 acc_stat = acc_stat.merge(main_clint_df_t4, left_on='RACC', right_on='acc_nm', how='left',suffixes=('_x', '_y'))
 
 acc_stat['Libra'] = np.where((acc_stat['TR_DS'].astype(str).str.contains(r"مدين|دائن"))
@@ -208,10 +193,6 @@ sellvalue['Profit Percentage(value)'] = np.where((sellvalue['invoive_type'].str.
 
 #############################
 
-
-
-
-
 budget = pd.read_excel(r"D:\New folder (2)\helo.xlsx")
 budget = budget.replace(r'^\s*$', np.nan, regex=True)
 budget['Acc_cd'] = budget['Acc_cd'].replace(r'[\u0600-\u06FF]|^\s*$', np.nan, regex=True)
@@ -238,9 +219,6 @@ def all_nonblanck_down(df, column):
         else:
             df.loc[i, column] = h
 
-
-
-
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat1','minat1_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat2','minat2_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
@@ -248,7 +226,6 @@ codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
 
-budget = budget.dropna(subset=['Acc_cd']).reset_index(drop=True)
 
 all_nonblanck_down(budget, 'minat1_name')
 all_nonblanck_down(budget, 'minat2_name')
@@ -258,7 +235,6 @@ all_nonblanck_down(budget, 'minat6_name')
 all_nonblanck_down(budget, 'minat8_name')
 
 budget.drop(budget.columns[[0,1,2,3,4,5,6,7,8,9,10,11,12,13]], axis=1, inplace=True)
-budget = budget[(budget['minat3_name'] !=budget['minat8_name'])| (budget['Acc_cd'] =='402')|(budget['Acc_cd'] =='403')|(budget['Acc_cd'] =='401')]
 budget.columns = budget.columns.str.replace('DbBal', 'الحركة مدين')
 budget.columns = budget.columns.str.replace('CrBal', 'الحركة دائن')
 budget.columns = budget.columns.str.replace('Label113', 'مدين نهاية المدة ')
@@ -276,10 +252,6 @@ budget.columns = budget.columns.str.replace('Text161', 'دائن اخر المد
 
 ##############################
 
-
-# item_df.to_excel(r"D:\result\result.xlsx",sheet_name='items_base')
-# accstat_df.to_excel(r"D:\result\result.xlsx", sheet_name='account statement')
-# profit_df.to_excel(r"D:\result\result.xlsx",sheet_name='profito')
 with pd.ExcelWriter(r"D:\result\result.xlsx") as writer:
     item_df.to_excel(writer, sheet_name='items_base')
    # accstat_df.to_excel(writer, sheet_name='account statement')
