@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 
-path_to_item_file = r"D:\New folder (2)\item_data.xlsx"
-path_to_item_file2 = r'D:\New folder (2)\item_df.xlsx'
+path_to_item_file = r"D:\result\FILES\item_data.xlsx"
+path_to_item_file2 = r"D:\result\FILES\item_df.xlsx"
 item_df = pd.read_excel(path_to_item_file)
 item_df2 = pd.read_excel(path_to_item_file2)
 
@@ -93,7 +93,7 @@ sellvalue = sellvalue.drop(['tax'],axis=1).reset_index(drop=True)
 
 
 ############################
-clints_df = pd.read_excel(r"C:\Users\mohamed\Desktop\newnew.xlsx")
+clints_df = pd.read_excel(r"D:\result\FILES\newnew.xlsx")
 clints_df = clints_df.replace(r'^\s*$', np.nan, regex=True)
 clints_df.drop(clints_df.index[clints_df['acc_nm'].isnull() ], inplace = True)
 
@@ -122,7 +122,7 @@ clints_df.columns = ['index', 'empty1', 'empty2', 'code','acc_nm','mony_forus','
 
 clints_df["max_time"]=clints_df["max_time"].astype("int32")
 
-acc_stat = pd.read_excel(r"C:\Users\mohamed\Desktop\CCCCCCCCCC.xlsx")
+acc_stat = pd.read_excel(r"D:\result\FILES\CCCCCCCCCC.xlsx")
 acc_stat.drop(['Text139', 'نص204'], axis=1)
 clints_df['acc_nm'] = clints_df['acc_nm'].fillna(0)
 
@@ -195,12 +195,10 @@ sellvalue['Profit Percentage(value)'] = np.where((sellvalue['invoive_type'].str.
 import numpy as np
 import pandas as pd
 
-budget = pd.read_excel(r"D:\New folder (2)\helo.xlsx")
+budget = pd.read_excel(r"D:\result\FILES\helo.xlsx")
 budget['Acc_cd'] = budget['Acc_cd'].replace(r'[^0-9]', np.nan, regex=True)
 budget = budget.dropna(subset=['Acc_cd']).reset_index(drop=True)
 budget['Acc_cd'] = budget['Acc_cd'].astype('int32').astype('str')
-print(budget.head(22))
-
 
 slice_barcode(budget,'minat1','Acc_cd',0,1,0)
 slice_barcode(budget,'minat2','Acc_cd',0,2,1)
@@ -219,17 +217,13 @@ def all_nonblanck_down(df, column):
             h = df.loc[i, column]
         else:
             df.loc[i, column] = h
-
-for i in range(1,9):
-    codetoname(budget,budget,'Acc_cd','Acc_nm','minat'+str(i),'minat'+str(i)+'_name')
-
-
-# codetoname(budget,budget,'Acc_cd','Acc_nm','minat1','minat1_name')
-# codetoname(budget,budget,'Acc_cd','Acc_nm','minat2','minat2_name')
-# codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
-# codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
-# codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
-# codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
+    return df
+codetoname(budget,budget,'Acc_cd','Acc_nm','minat1','minat1_name')
+codetoname(budget,budget,'Acc_cd','Acc_nm','minat2','minat2_name')
+codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
+codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
+codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
+codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
 
 
 all_nonblanck_down(budget, 'minat1_name')
@@ -240,13 +234,12 @@ all_nonblanck_down(budget, 'minat6_name')
 all_nonblanck_down(budget, 'minat8_name')
 
 budget.drop(budget.columns[[0,1,2,3,4,5,6,7,8,9,10,11,12,13]], axis=1, inplace=True)
-budget.columns = budget.columns.str.replace('DbBal', 'الحركة مدين')
-budget.columns = budget.columns.str.replace('CrBal', 'الحركة دائن')
-budget.columns = budget.columns.str.replace('Label113', 'مدين نهاية المدة ')
-budget.columns = budget.columns.str.replace('Text153', 'مدين أول المدة ')
-budget.columns = budget.columns.str.replace('Text154', 'دائن اول  المدة ')
-budget.columns = budget.columns.str.replace('Text161', 'دائن اخر المدة')
-
+budget.rename(columns = {'DbBal':'الحركة مدين', 
+                         'CrBal':'الحركة دائن', 
+                         'Label113':'مدين نهاية المدة ', 
+                         'Text153':'مدين أول المدة ',
+                         'Text154':'دائن اول  المدة ',
+                         'Text161': 'دائن اخر المدة'}, inplace = True)
 
 
 
