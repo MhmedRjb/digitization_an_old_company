@@ -192,13 +192,14 @@ sellvalue['Profit Percentage(value)'] = np.where((sellvalue['invoive_type'].str.
 
 
 #############################
+import numpy as np
+import pandas as pd
 
 budget = pd.read_excel(r"D:\New folder (2)\helo.xlsx")
-budget = budget.replace(r'^\s*$', np.nan, regex=True)
-budget['Acc_cd'] = budget['Acc_cd'].replace(r'[\u0600-\u06FF]|^\s*$', np.nan, regex=True)
-
+budget['Acc_cd'] = budget['Acc_cd'].replace(r'[^0-9]', np.nan, regex=True)
 budget = budget.dropna(subset=['Acc_cd']).reset_index(drop=True)
 budget['Acc_cd'] = budget['Acc_cd'].astype('int32').astype('str')
+print(budget.head(22))
 
 
 slice_barcode(budget,'minat1','Acc_cd',0,1,0)
@@ -219,12 +220,16 @@ def all_nonblanck_down(df, column):
         else:
             df.loc[i, column] = h
 
-codetoname(budget,budget,'Acc_cd','Acc_nm','minat1','minat1_name')
-codetoname(budget,budget,'Acc_cd','Acc_nm','minat2','minat2_name')
-codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
-codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
-codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
-codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
+for i in range(1,9):
+    codetoname(budget,budget,'Acc_cd','Acc_nm','minat'+str(i),'minat'+str(i)+'_name')
+
+
+# codetoname(budget,budget,'Acc_cd','Acc_nm','minat1','minat1_name')
+# codetoname(budget,budget,'Acc_cd','Acc_nm','minat2','minat2_name')
+# codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
+# codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
+# codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
+# codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
 
 
 all_nonblanck_down(budget, 'minat1_name')
@@ -254,8 +259,6 @@ budget.columns = budget.columns.str.replace('Text161', 'دائن اخر المد
 
 with pd.ExcelWriter(r"D:\result\result.xlsx") as writer:
     item_df.to_excel(writer, sheet_name='items_base')
-   # accstat_df.to_excel(writer, sheet_name='account statement')
-  #  profit_df.to_excel(writer, sheet_name='profito')
     buyvaluedf.to_excel(writer, sheet_name='buyvaluedf')
     sellvalue.to_excel(writer, sheet_name='sellvalue')
     main_clint_df_t4.to_excel(writer, sheet_name='clint_database')
