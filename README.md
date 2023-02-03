@@ -1,6 +1,7 @@
 # digitization_an_old_company
 this repository collect data from different  sources (desktop app, WhatsApp messages, pdfs from emails ) 
-and handle it to be useful and understandable in one place 
+and handle it to be useful and understandable in one place
+## and the winter is totally coming
 by using 
 - python 
   - pandas
@@ -28,10 +29,10 @@ collect the data using the selenium library, clean and handle it by pandas libra
 
 ### 3.  development inventory management 
 
----	
-# steps
-## 1
-### 1.1
+# :snowflake: and the winter is totally coming
+## steps
+### 1
+#### 1.1
 - [x] extraxt important file from the ERP 
 - [x] clean account statement file
 - [x] clean budget file 
@@ -39,15 +40,15 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [x] clean item_df file 
   - [ ] optimize item_df file 
 - [ ] clean inventory file
-### 1.2
+#### 1.2
 - [ ] automat extraxt files 
-### 1.3
+#### 1.3
 - [x] Visualize the data
   - [ ] Visualize data in Power BI
   - [ ] Visualize mony flow 
 - [ ] study and learn the important KPIs
 
-## 2.
+### 2.
 
 
 
