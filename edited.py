@@ -192,8 +192,6 @@ sellvalue['Profit Percentage(value)'] = np.where((sellvalue['invoive_type'].str.
 
 
 #############################
-import numpy as np
-import pandas as pd
 
 budget = pd.read_excel(r"D:\result\FILES\helo.xlsx")
 budget['Acc_cd'] = budget['Acc_cd'].replace(r'[^0-9]', np.nan, regex=True)
