@@ -40,11 +40,12 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [x] extraxt important file from the ERP 
 - [x] clean account statement file
 - [x] clean budget file 
-  - [ ] optimize budget file
+  - [ ] optimize budget code
 - [x] clean clint_df file 
 - [x] clean item_df file 
-  - [ ] optimize item_df file 
+  - [ ] optimize item_df code 
 - [ ] clean inventory file
+- [ ] merge budget&acc_statment in one table 
 #### 1.2
 - [ ] automat extraxt files 
 - [ ] :dizzy:	automat Data entery from files
@@ -54,6 +55,8 @@ collect the data using the selenium library, clean and handle it by pandas libra
   - [ ] Visualize data in Power BI
   - [ ] Visualize mony flow 
 - [ ] study and learn the important KPIs
+  - [ ] calcualte turnover item 
+- [ ]   
 
 ### 2.
 
