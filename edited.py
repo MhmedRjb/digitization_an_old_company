@@ -60,6 +60,29 @@ item_df['Libra officer'] = np.where((item_df['barcode_T2'].astype(str).str.conta
 
 
 ##########################
+import numpy as np
+import pandas as pd
+itit = r"C:\Users\mohamed\Desktop\itit.xlsx"
+iyiy = r"C:\Users\mohamed\Desktop\iyiy.xlsx"
+itit = pd.read_excel(itit)
+iyiy = pd.read_excel(iyiy)
+
+add_left_zero(itit,'itm_cd')
+add_left_zero(iyiy,'itm_cd')
+
+slice_barcode(iyiy, 'itm_cd_T1', 'itm_cd',0, 2, 0)
+slice_barcode(iyiy, 'itm_cd_T2', 'itm_cd',0, 4, 1)
+
+codetoname(iyiy, itit,'itm_cd','ITM_NM','itm_cd_T1','itm_cd_T1_name')
+codetoname(iyiy, itit,'itm_cd','ITM_NM','itm_cd_T1','itm_cd_T1_name')
+codetoname(iyiy, itit,'itm_cd','ITM_NM','itm_cd_T1','itm_cd_T1_name')
+iyiy.to_excel(r"C:\Users\mohamed\Desktop\iyiy2.xlsx", index=False)
+
+
+
+
+
+##########################
 test = pd.read_excel(r"D:\result\FILES\ALL_ABOUT.xlsx")
 "clean the data"
 test = test.dropna(axis='columns', how="all")
