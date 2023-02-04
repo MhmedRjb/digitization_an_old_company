@@ -1,3 +1,5 @@
+<img src="https://devstickers.com/assets/img/pro/kjyz.png"  >
+
 # digitization_an_old_company
 this repository collect data from different  sources (desktop app, WhatsApp messages, pdfs from emails ) 
 and handle it to be useful and understandable in one place
@@ -29,19 +31,24 @@ collect the data using the selenium library, clean and handle it by pandas libra
 
 ### 3.  development inventory management 
 
-# :snowflake: and the winter is totally coming
+# :snowflake: and the winter is  coming
+
+
 ## steps
 ### 1
 #### 1.1
 - [x] extraxt important file from the ERP 
 - [x] clean account statement file
 - [x] clean budget file 
+  - [ ] optimize budget file
 - [x] clean clint_df file 
 - [x] clean item_df file 
   - [ ] optimize item_df file 
 - [ ] clean inventory file
 #### 1.2
 - [ ] automat extraxt files 
+- [ ] :dizzy:	automat Data entery from files
+
 #### 1.3
 - [x] Visualize the data
   - [ ] Visualize data in Power BI
