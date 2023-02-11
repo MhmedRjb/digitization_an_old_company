@@ -63,8 +63,8 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [ ]   
 
 ### 3.
-- [] Assistant data (excel)
-  - [] cars 
+- [ ] Assistant data (excel)
+  - [ ] cars 
 
  
 
