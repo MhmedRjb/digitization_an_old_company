@@ -1,33 +1,13 @@
 import numpy as np
 import pandas as pd
 
-path_to_item_file = r"D:\result\FILES\item_data.xlsx"
-path_to_item_file2 = r"D:\result\FILES\item_df.xlsx"
-item_df = pd.read_excel(path_to_item_file)
-item_df2 = pd.read_excel(path_to_item_file2)
-
-item_df.columns = ['Text139', 'barcode', 'item', 'quntity', 'typo', 'SLS_UNT', 'PRC1', 'PRC2']
-
-item_df = item_df.dropna(subset=['item', 'quntity']).reset_index(drop=True)
-
-
 def add_left_zero(df, codel_col):
     df[codel_col] = '0' + df[codel_col].astype('int32').astype('str')
-
-
-add_left_zero(item_df2, 'code')
-add_left_zero(item_df, 'barcode')
-
 
 def slice_barcode(df, new_column,thebarcode ,x, y, postion=0):
     df[new_column] = df[thebarcode].astype(str).str[x:y]
     col = df.pop(new_column)
     df.insert(postion, col.name, col)
-
-
-slice_barcode(item_df, 'barcode_T1', 'barcode',0, 2, 0)
-slice_barcode(item_df, 'barcode_T2', 'barcode',0, 4, 1)
-
 
 def codetoname(target_df, translatr_df, DIC_KEY, DIC_value, traget_code_col, new_name_col):
     translator = {}
@@ -36,31 +16,8 @@ def codetoname(target_df, translatr_df, DIC_KEY, DIC_value, traget_code_col, new
     target_df[new_name_col] = target_df[traget_code_col].map(translator)
 
 
-codetoname(item_df, item_df2, 'code', 'item', 'barcode_T1', 'barcode_T1_name')
-codetoname(item_df, item_df2, 'code', 'item', 'barcode_T2', 'barcode_T2_name')
-codetoname(item_df, item_df2, 'code', 'item', 'barcode', 'barcode_name')
-
-item_df['Libra officer'] = np.where((item_df['barcode_T2'].astype(str).str.contains(r'\b010[1,3].*')),
-                                    12.5, 
-                            np.where( item_df['barcode'].astype(str).str.contains(r'\b0201.*[4-5].*|\b0202.*[3].*'),
-                                    9,
-                            np.where(item_df['barcode'].astype(str).str.contains(r'\b030[3-7]0[1].*|\b030602.*'), 
-                                    10,
-                            np.where(item_df['barcode'].astype(str).str.contains(r'\b04010[1-3]|030203'), 
-                                    18,
-                            np.where((item_df['barcode'].astype(str).str.contains(r'0102002')), 
-                            32.5 ,
-                                              np.where((item_df['barcode'].astype(str).str.contains(r'010200[3-4]')), 52
-                                                       , np.where(
-                                                      (item_df['barcode'].astype(str).str.contains(r'0102005')), 104
-                                                          , np.where(
-                                                              (item_df['barcode'].astype(str).str.contains(r'0102001')),
-                                                              12.5
-                                                              , 1))))))))
-
-
 ##########################
-test = pd.read_excel(r"D:\result\FILES\ALL_ABOUT.xlsx")
+test = pd.read_excel(r"D:\result\FILES\New folder (2)\SBJRNLITMRPTTAX.xlsx")
 "clean the data"
 test = test.dropna(axis='columns', how="all")
 test.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
@@ -93,7 +50,7 @@ sellvalue = sellvalue.drop(['tax'],axis=1).reset_index(drop=True)
 
 
 ############################
-clints_df = pd.read_excel(r"D:\result\FILES\newnew.xlsx")
+clints_df = pd.read_excel(r"D:\result\FILES\New folder (2)\SBAccMFDtlRpt (3).xlsx")
 clints_df = clints_df.replace(r'^\s*$', np.nan, regex=True)
 clints_df.drop(clints_df.index[clints_df['acc_nm'].isnull() ], inplace = True)
 
@@ -122,7 +79,7 @@ clints_df.columns = ['index', 'empty1', 'empty2', 'code','acc_nm','mony_forus','
 
 clints_df["max_time"]=clints_df["max_time"].astype("int32")
 
-acc_stat = pd.read_excel(r"D:\result\FILES\CCCCCCCCCC.xlsx")
+acc_stat = pd.read_excel(r"D:\result\FILES\New folder (2)\SBACCRPTA4 (2).xlsx")
 acc_stat.drop(['Text139', 'نص204'], axis=1)
 clints_df['acc_nm'] = clints_df['acc_nm'].fillna(0)
 
@@ -168,11 +125,14 @@ acc_stat['Libra'] = np.where((acc_stat['TR_DS'].astype(str).str.contains(r"مد�
                      ))))))))
 
 
+
 acc_stat["mov_d"]=acc_stat["mov_d"].fillna(0)
 acc_stat["mov_c"]=acc_stat["mov_c"].fillna(0)
-acc_stat["Total_bal"]=(acc_stat["mov_d"]-acc_stat["mov_c"])*(1-acc_stat["tax"])
+acc_stat["Total_bal"]=-(acc_stat["mov_d"]-acc_stat["mov_c"])*(1-acc_stat["tax"])
 
-lats_acc_stat = acc_stat[['RACC','tr_dt',"mov_d","mov_c","TR_DS",'Libra','max_time','days','tax','Total_bal','bal_D',"bal_c"]].copy(deep=False)
+lats_acc_stat = acc_stat[['RACC','tr_dt',"mov_d","mov_c","TR_DS",'Libra','max_time','days','tax','Total_bal','bal_D',"bal_c","TEXT207"]].copy(deep=False)
+
+
 
 sellvalue = pd.merge(main_clint_df_t4[['acc_nm', 'tax']],sellvalue , left_on='acc_nm',right_on='acc_name',how='right',validate='one_to_many')
 sellvalue = sellvalue.drop(['acc_nm'],axis=1).reset_index(drop=True)
@@ -188,14 +148,56 @@ sellvalue['Profit Percentage(value)'] = np.where((sellvalue['invoive_type'].str.
                                , -(sellvalue['net_profit'] /sellvalue['value']))
 
 
+helprt_acc=[lats_acc_stat['TR_DS'] .str.contains('مرتجع|بيع')]
+helprt_acc=lats_acc_stat.groupby(['RACC','Libra','tr_dt'])['Total_bal'].sum().reset_index()
 
-
-
+sellhelper=sellvalue['DATE'].agg(['min', 'max'])
+sellhelper["# of days"] = (sellhelper["max"] - sellhelper["min"])/ np.timedelta64(1, 'D')
+sellhelper["# of weeks"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'W')
+sellhelper["# of months"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'M')
+sellhelper["#3 of months"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(3, 'M')
+# sellhelper["# of years"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'Y')
 #############################
-import numpy as np
-import pandas as pd
 
-budget = pd.read_excel(r"D:\result\FILES\helo.xlsx")
+
+
+##############################
+
+def add_left_zero(df, codel_col):
+    df[codel_col] = '0' + df[codel_col].astype('int32').astype('str')
+
+def slice_barcode(df, new_column,thebarcode ,x, y, postion=0):
+    df[new_column] = df[thebarcode].astype(str).str[x:y]
+    col = df.pop(new_column)
+    df.insert(postion, col.name, col)
+
+def codetoname(target_df, translatr_df, DIC_KEY, DIC_value, traget_code_col, new_name_col):
+    translator = {}
+    for i in range(0, translatr_df.shape[0]):
+        translator[translatr_df[DIC_KEY][i]] = translatr_df[DIC_value][i]
+    target_df[new_name_col] = target_df[traget_code_col].map(translator)
+
+all_item = pd.read_excel(r"D:\result\FILES\New folder (2)\Sbitmsmfrpt_ORG.xlsx")
+item_with_det = pd.read_excel(r"C:\Users\mohamed\Desktop\item_with_det.xlsx")
+all_item = all_item.dropna(subset=['itm_cd']).reset_index(drop=True)
+item_with_det = item_with_det.dropna(subset=['itm_cd']).reset_index(drop=True)
+
+add_left_zero(all_item,'itm_cd')
+add_left_zero(item_with_det,'itm_cd')
+
+slice_barcode(item_with_det, 'itm_cd_T1', 'itm_cd',0, 2, 0)
+slice_barcode(item_with_det, 'itm_cd_T2', 'itm_cd',0, 4, 1)
+
+codetoname(item_with_det, all_item,'itm_cd','ITM_NM','itm_cd_T1','itm_cd_T1_name')
+codetoname(item_with_det, all_item,'itm_cd','ITM_NM','itm_cd_T2','itm_cd_T2_name')
+
+##########################
+
+sellvalue = sellvalue.drop(['tax'],axis=1).reset_index(drop=True)
+
+############################
+
+budget = pd.read_excel(r"D:\result\FILES\New folder (2)\SBaccTriRpt.xlsx")
 budget['Acc_cd'] = budget['Acc_cd'].replace(r'[^0-9]', np.nan, regex=True)
 budget = budget.dropna(subset=['Acc_cd']).reset_index(drop=True)
 budget['Acc_cd'] = budget['Acc_cd'].astype('int32').astype('str')
@@ -212,7 +214,7 @@ slice_barcode(budget,'minat9','Acc_cd',0,9,7)
 
 def all_nonblanck_down(df, column):
     h = 0
-    for i in range(1, 261):
+    for i in range(1, df.shape[0]):
         if pd.isna(df.loc[i, column]) is False:
             h = df.loc[i, column]
         else:
@@ -224,7 +226,7 @@ codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
-
+print(budget.shape[0])
 
 all_nonblanck_down(budget, 'minat1_name')
 all_nonblanck_down(budget, 'minat2_name')
@@ -243,20 +245,29 @@ budget.rename(columns = {'DbBal':'الحركة مدين',
 
 
 
-
-
-
+##############################
+  
+store = pd.read_excel(r"D:\result\FILES\New folder (2)\SBINQALLRPT_CTRL (2).xlsx")
+store['itm_cd'] = store['itm_cd'].replace(r'[^0-9]', np.nan, regex=True).reset_index(drop=True)
+print(store.shape[0])
+all_nonblanck_down(store, 'ITM_NM')
+all_nonblanck_down(store, 'itm_cd')
 
 
 ##############################
 
-with pd.ExcelWriter(r"D:\result\result.xlsx") as writer:
-    item_df.to_excel(writer, sheet_name='items_base')
+with pd.ExcelWriter(r"D:\result\result.xlsx",engine="openpyxl") as writer:
+    item_with_det.to_excel(writer, sheet_name='items_base')
     buyvaluedf.to_excel(writer, sheet_name='buyvaluedf')
     sellvalue.to_excel(writer, sheet_name='sellvalue')
     main_clint_df_t4.to_excel(writer, sheet_name='clint_database')
     budget.to_excel(writer, sheet_name='budget')
     lats_acc_stat.to_excel(writer, sheet_name='lats_acc_stat')
+    sellhelper.to_excel(writer, sheet_name='sellhelper')
+    store.to_excel(writer, sheet_name='store')
+
+
+
 
 
 
