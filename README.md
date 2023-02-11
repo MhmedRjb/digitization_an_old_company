@@ -44,21 +44,31 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [x] clean clint_df file 
 - [x] clean item_df file 
   - [ ] optimize item_df code 
-- [ ] clean inventory file
+- [x] clean inventory file
 - [ ] merge budget&acc_statment in one table 
 #### 1.2
+
 - [ ] automat extraxt files 
 - [ ] :dizzy:	automat Data entery from files
 
 #### 1.3
 - [x] Visualize the data
   - [ ] Visualize data in Power BI
-  - [ ] Visualize mony flow 
+    - [x] Visualize data inventory in Power BI
+    - [ ] Visualize data clint in Power BI    
+    - [ ] Visualize mony flow 
+    - [ ] Visualize budget
 - [ ] study and learn the important KPIs
   - [ ] calcualte turnover item 
 - [ ]   
 
-### 2.
+### 3.
+- [] Assistant data (excel)
+  - [] cars 
+
+ 
+
+
 
 
 
