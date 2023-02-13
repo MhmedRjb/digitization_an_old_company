@@ -40,23 +40,25 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [x] extraxt important file from the ERP 
 - [x] clean account statement file
 - [x] clean budget file 
-  - [ ] optimize budget code
+  - [ ]:timer_clock: optimize budget code
 - [x] clean clint_df file 
 - [x] clean item_df file 
-  - [ ] optimize item_df code 
+  - [ ] :timer_clock: optimize item_df code 
 - [x] clean inventory file
-- [ ] merge budget&acc_statment in one table 
+- [ ]:timer_clock: merge budget&acc_statment in one table 
+
 #### 1.2
 
 - [ ] automat extraxt files 
+  - [ ] :timer_clock: check library  
 - [ ] :dizzy:	automat Data entery from files
 
 #### 1.3
 - [x] Visualize the data
   - [ ] Visualize data in Power BI
     - [x] Visualize data inventory in Power BI
-    - [ ] Visualize data clint in Power BI    
-    - [ ] Visualize mony flow 
+    - [ ] :timer_clock: Visualize data clint in Power BI    
+    - [ ] :timer_clock: Visualize mony flow 
     - [ ] Visualize budget
 - [ ] study and learn the important KPIs
   - [ ] calcualte turnover item 
