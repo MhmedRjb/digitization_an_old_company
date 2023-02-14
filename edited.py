@@ -15,9 +15,9 @@ def codetoname(target_df, translatr_df, DIC_KEY, DIC_value, traget_code_col, new
         translator[translatr_df[DIC_KEY][i]] = translatr_df[DIC_value][i]
     target_df[new_name_col] = target_df[traget_code_col].map(translator)
 
+##############################
 
-##########################
-test = pd.read_excel(r"D:\result\FILES\New folder (2)\SBJRNLITMRPTTAX.xlsx")
+test = pd.read_excel(r"D:\result\FILES\New folder (2)\SBJRNLITMRPTTAX.xls")
 "clean the data"
 test = test.dropna(axis='columns', how="all")
 test.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
@@ -47,10 +47,9 @@ sellvalue['total_quantity'] = np.where((sellvalue['invoive_type'].str.contains('
 
 sellvalue = sellvalue.drop(['tax'],axis=1).reset_index(drop=True)
 
+##############################
 
-
-############################
-clints_df = pd.read_excel(r"D:\result\FILES\New folder (2)\SBAccMFDtlRpt (3).xlsx")
+clints_df = pd.read_excel(r"D:\result\FILES\New folder (2)\SBAccMFDtlRpt.xls")
 clints_df = clints_df.replace(r'^\s*$', np.nan, regex=True)
 clints_df.drop(clints_df.index[clints_df['acc_nm'].isnull() ], inplace = True)
 
@@ -79,7 +78,7 @@ clints_df.columns = ['index', 'empty1', 'empty2', 'code','acc_nm','mony_forus','
 
 clints_df["max_time"]=clints_df["max_time"].astype("int32")
 
-acc_stat = pd.read_excel(r"D:\result\FILES\New folder (2)\SBACCRPTA4 (2).xlsx")
+acc_stat = pd.read_excel(r"D:\result\FILES\New folder (2)\SBACCRPTA4.xls")
 acc_stat.drop(['Text139', 'نص204'], axis=1)
 clints_df['acc_nm'] = clints_df['acc_nm'].fillna(0)
 
@@ -125,13 +124,11 @@ acc_stat['Libra'] = np.where((acc_stat['TR_DS'].astype(str).str.contains(r"مد�
                      ))))))))
 
 
-
 acc_stat["mov_d"]=acc_stat["mov_d"].fillna(0)
 acc_stat["mov_c"]=acc_stat["mov_c"].fillna(0)
 acc_stat["Total_bal"]=-(acc_stat["mov_d"]-acc_stat["mov_c"])*(1-acc_stat["tax"])
 
 lats_acc_stat = acc_stat[['RACC','tr_dt',"mov_d","mov_c","TR_DS",'Libra','max_time','days','tax','Total_bal','bal_D',"bal_c","TEXT207"]].copy(deep=False)
-
 
 
 sellvalue = pd.merge(main_clint_df_t4[['acc_nm', 'tax']],sellvalue , left_on='acc_nm',right_on='acc_name',how='right',validate='one_to_many')
@@ -157,9 +154,6 @@ sellhelper["# of weeks"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelt
 sellhelper["# of months"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'M')
 sellhelper["#3 of months"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(3, 'M')
 # sellhelper["# of years"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'Y')
-#############################
-
-
 
 ##############################
 
@@ -177,7 +171,7 @@ def codetoname(target_df, translatr_df, DIC_KEY, DIC_value, traget_code_col, new
         translator[translatr_df[DIC_KEY][i]] = translatr_df[DIC_value][i]
     target_df[new_name_col] = target_df[traget_code_col].map(translator)
 
-all_item = pd.read_excel(r"D:\result\FILES\New folder (2)\Sbitmsmfrpt_ORG.xlsx")
+all_item = pd.read_excel(r"D:\result\FILES\New folder (2)\Sbitmsmfrpt_ORG.xls")
 item_with_det = pd.read_excel(r"C:\Users\mohamed\Desktop\item_with_det.xlsx")
 all_item = all_item.dropna(subset=['itm_cd']).reset_index(drop=True)
 item_with_det = item_with_det.dropna(subset=['itm_cd']).reset_index(drop=True)
@@ -191,13 +185,15 @@ slice_barcode(item_with_det, 'itm_cd_T2', 'itm_cd',0, 4, 1)
 codetoname(item_with_det, all_item,'itm_cd','ITM_NM','itm_cd_T1','itm_cd_T1_name')
 codetoname(item_with_det, all_item,'itm_cd','ITM_NM','itm_cd_T2','itm_cd_T2_name')
 
-##########################
+##############################
+
 
 sellvalue = sellvalue.drop(['tax'],axis=1).reset_index(drop=True)
 
-############################
+##############################
 
-budget = pd.read_excel(r"D:\result\FILES\New folder (2)\SBaccTriRpt.xlsx")
+
+budget = pd.read_excel(r"D:\result\FILES\New folder (2)\SBaccTriRpt.xls")
 budget['Acc_cd'] = budget['Acc_cd'].replace(r'[^0-9]', np.nan, regex=True)
 budget = budget.dropna(subset=['Acc_cd']).reset_index(drop=True)
 budget['Acc_cd'] = budget['Acc_cd'].astype('int32').astype('str')
@@ -220,13 +216,13 @@ def all_nonblanck_down(df, column):
         else:
             df.loc[i, column] = h
     return df
+
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat1','minat1_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat2','minat2_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat3','minat3_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat5','minat5_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat6','minat6_name')
 codetoname(budget,budget,'Acc_cd','Acc_nm','minat8','minat8_name')
-print(budget.shape[0])
 
 all_nonblanck_down(budget, 'minat1_name')
 all_nonblanck_down(budget, 'minat2_name')
@@ -247,12 +243,10 @@ budget.rename(columns = {'DbBal':'الحركة مدين',
 
 ##############################
   
-store = pd.read_excel(r"D:\result\FILES\New folder (2)\SBINQALLRPT_CTRL (2).xlsx")
+store = pd.read_excel(r"D:\result\FILES\New folder (2)\SBINQALLRPT_CTRL.xls")
 store['itm_cd'] = store['itm_cd'].replace(r'[^0-9]', np.nan, regex=True).reset_index(drop=True)
-print(store.shape[0])
 all_nonblanck_down(store, 'ITM_NM')
 all_nonblanck_down(store, 'itm_cd')
-
 
 ##############################
 
