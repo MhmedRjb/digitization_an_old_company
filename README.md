@@ -29,7 +29,7 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - calls 
 
 
-### 3.  development inventory management 
+### 3.  documentary cycle
 
 # :snowflake: and the winter is  coming
 
@@ -65,15 +65,17 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [ ]   
 
 ### 3.
-- [ ] Assistant data (excel)
-  - [ ] cars 
-- [ ] connect Bank account with the main program (excel)
+- [ ] connect Bank account with the main program
+- [ ] inventory mangment (set rules)
+  this will leed to accurate numbers 
+  - [ ] inventory get
+  - [ ] inventory GIVE
+  - [ ] inventory quaility control 
   
 
- 
 
 
 
 
 
- 
+documentary cycle
