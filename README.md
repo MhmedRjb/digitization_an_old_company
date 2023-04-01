@@ -46,6 +46,7 @@ collect the data using the selenium library, clean and handle it by pandas libra
   - [ ] :timer_clock: optimize item_df code 
 - [x] clean inventory file
 - [ ]:timer_clock: merge budget&acc_statment in one table 
+- [ ] remove most if else from code and make data genrate what is lost
 
 #### 1.2
 
