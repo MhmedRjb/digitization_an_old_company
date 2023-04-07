@@ -65,7 +65,8 @@ slice_barcode(main_clint_df_t4,'minat3','acc_cd',0,6,2)
 codetoname(main_clint_df_t4,clints_df,'acc_cd','acc_nm','minat1','minat1_name')
 codetoname(main_clint_df_t4,clints_df,'acc_cd','acc_nm','minat2','minat2_name')
 codetoname(main_clint_df_t4,clints_df,'acc_cd','acc_nm','minat3','minat3_name')
-
+##todo
+"make somthing in data base it selfe "
 main_clint_df_t4['tax'] = np.where(main_clint_df_t4['minat3'].astype(str).str.contains('123101.*'), 0.08,
                             np.where(main_clint_df_t4['minat3'].astype(str).str.contains('123104.*'), 0.04,
                                      np.where(main_clint_df_t4['minat3'].astype(str).str.contains('12310[2,3].*'), 0.01,
@@ -93,6 +94,8 @@ def give_name_for_NAN_in_another_col(traget_df,badeling_col,badeling_value,chang
             traget_df.loc[i, changabel_col] = insert_df.loc[j, insert_value]
 
 give_name_for_NAN_in_another_col(acc_stat,'TR_DS','ماقبله','RACC',clints_df,'acc_nm')
+
+
 'replace np.nat with 0'
 acc_stat['tr_dt'] = acc_stat['tr_dt'].replace(np.nan, "30/12/2022 00:00:00")
 
@@ -114,6 +117,8 @@ acc_stat['Libra'] = np.where((acc_stat['TR_DS'].astype(str).str.contains(r"مد�
                                     acc_stat["tr_dt"].dt.to_period('M').dt.end_time + pd.Timedelta(14, unit='d'),
                     np.where((acc_stat['max_time']==45), 
                                     acc_stat["tr_dt"].dt.to_period('d').dt.start_time + pd.Timedelta(45, unit='d'),
+                    np.where((acc_stat['max_time']==565), 
+                                    acc_stat["tr_dt"].dt.to_period('M').dt.end_time + pd.Timedelta(0, unit='d'),
                     np.where((acc_stat['max_time']==3), 
                                     acc_stat["tr_dt"].dt.to_period('d').dt.start_time + pd.Timedelta(3, unit='d'),
                     np.where((np.logical_and((acc_stat['max_time']==333),(acc_stat['days']<15))), 
@@ -121,14 +126,14 @@ acc_stat['Libra'] = np.where((acc_stat['TR_DS'].astype(str).str.contains(r"مد�
                     np.where((np.logical_and((acc_stat['max_time']==333),(acc_stat['days']>=15))),
                                     acc_stat["tr_dt"].dt.to_period('M').dt.end_time + pd.Timedelta(7, unit='d'),
                     acc_stat["tr_dt"].dt.to_period('d').dt.start_time + pd.Timedelta(0, unit='d')
-                     ))))))))
+                     )))))))))
 
 
 acc_stat["mov_d"]=acc_stat["mov_d"].fillna(0)
 acc_stat["mov_c"]=acc_stat["mov_c"].fillna(0)
 acc_stat["Total_bal"]=-(acc_stat["mov_d"]-acc_stat["mov_c"])*(1-acc_stat["tax"])
 
-lats_acc_stat = acc_stat[['RACC','tr_dt',"mov_d","mov_c","TR_DS",'Libra','max_time','days','tax','Total_bal','bal_D',"bal_c","TEXT207"]].copy(deep=False)
+lats_acc_stat = acc_stat[['RACC','tr_dt',"mov_d","mov_c","TR_DS",'Libra','max_time','days','tax','Total_bal','bal_D',"bal_c","TEXT207","TEXT208","Text184"]].copy(deep=False)
 
 
 sellvalue = pd.merge(main_clint_df_t4[['acc_nm', 'tax']],sellvalue , left_on='acc_nm',right_on='acc_name',how='right',validate='one_to_many')
@@ -153,7 +158,6 @@ sellhelper["# of days"] = (sellhelper["max"] - sellhelper["min"])/ np.timedelta6
 sellhelper["# of weeks"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'W')
 sellhelper["# of months"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'M')
 sellhelper["#3 of months"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(3, 'M')
-# sellhelper["# of years"] = (sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'Y')
 
 ##############################
 
@@ -245,6 +249,20 @@ budget.rename(columns = {'DbBal':'الحركة مدين',
   
 store = pd.read_excel(r"D:\result\FILES\New folder (2)\SBINQALLRPT_CTRL.xls")
 store['itm_cd'] = store['itm_cd'].replace(r'[^0-9]', np.nan, regex=True).reset_index(drop=True)
+store = store.drop('Text25', axis=1)
+
+store.rename(columns = {'sBal':'الرصيد عدد', 
+                         'sOutQty':'الصادر عدد', 
+                         'sInQty':'الوارد عدد', 
+                         'sLbl':'اخر جرد عدد',
+                         'نص98':'اخر جرد وزن',
+                         'نص97': 'الرصيد وزن',
+                         'نص96':'الصادر وزن',
+                         'نص95': 'الوارد وزن',
+                         "Text77": 'المخزن',
+                         }, inplace = True)
+
+
 all_nonblanck_down(store, 'ITM_NM')
 all_nonblanck_down(store, 'itm_cd')
 
