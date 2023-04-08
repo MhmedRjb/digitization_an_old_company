@@ -11,7 +11,7 @@ by using
   - seaborn
   - selenium
 - SQL 
-- Power BI
+- Power BI  JJJ
 ## this project has three steps
 ### 1. collect the data from the ERP application 
 collect the data using the selenium library, clean and handle it by pandas library then visualization it in power bi /seaborn
