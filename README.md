@@ -62,7 +62,8 @@ collect the data using the selenium library, clean and handle it by pandas libra
     - [ ] :timer_clock: Visualize mony flow 
     - [ ] Visualize budget
 - [ ] study and learn the important KPIs
-  - [ ] calcualte turnover item 
+  - [ ] calcualte turnover item in power bi 
+
 - [ ]   
 
 ### 3.
