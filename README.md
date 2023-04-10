@@ -40,7 +40,7 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [x] extraxt important file from the ERP 
 - [x] clean account statement file
 - [x] clean budget file 
-  - [ ]:timer_clock: optimize budget code
+  -  [ ] :star2: :star2::star2::star2::star2: optimize budget code
 - [x] clean clint_df file 
 - [x] clean item_df file 
   - [ ] :timer_clock: optimize item_df code 
