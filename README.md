@@ -41,6 +41,7 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [x] clean account statement file
 - [x] clean budget file 
   -  [ ] :star2: :star2::star2::star2::star2: optimize budget code
+- [ ] :moneybag: setalment and transfers  
 - [x] clean clint_df file 
 - [x] clean item_df file 
   - [ ] :timer_clock: optimize item_df code 
