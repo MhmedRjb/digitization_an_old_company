@@ -45,6 +45,22 @@ def fill_non_blank_down(df, column):
 
     df[column] = df[column].fillna(method='ffill')
     return df
+def fill_non_blank_down2(df, columns):
+    """
+    Fill NaN values in the specified columns with the previous non-NaN value in the same column.
+
+    Args:
+        df: A pandas dataframe.
+        columns: A list of column names to fill.
+
+    Returns:
+        The modified dataframe.
+    """
+
+    for column in columns:
+        df[column] = df[column].fillna(method='ffill')
+        
+    return df
 def codetoname(target_df, translatr_df, DIC_KEY, DIC_value, traget_code_col, new_name_col, default_name=np.NAN):
     """
     Map codes to names in a pandas dataframe using a translation table.
@@ -101,17 +117,25 @@ def codetoname2(df, mapping_df, code_col, name_col, cols_to_map):
 
 
 ##############################
+expected_cols=['Acc_Nm','sCst',
+               'Text103','Text120',
+               'Text101','sPrc',
+               'sQty',	'spkid']
+try:
+    goods_movement = pd.read_excel(r"D:\result\FILES\New folder (2)\SBJRNLITMRPTTAX.xls")
+    if not set(expected_cols).issubset(goods_movement.columns):
+        raise ValueError('The file does not contain the expected columns:', expected_cols)
+except Exception as e:
+    print('Error:', e)
 
-
-test = pd.read_excel(r"D:\result\FILES\New folder (2)\SBJRNLITMRPTTAX.xls")
 "clean the data"
-test = test.dropna(axis='columns', how="all")
-test.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
+goods_movement = goods_movement.dropna(axis='columns', how="all")
+goods_movement.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
                 'value', 'tax', 'discount', 'unitprice',
                 'quantity', 'type', 'invoive_type',
                 'item_NAME', 'ITEM_CODE', 'INVOICE_T1', 'INVOICE', 'DATE']
 "filter the data"
-buyvaluedf = test[(test['invoive_type'].str.contains(
+buyvaluedf = goods_movement[(goods_movement['invoive_type'].str.contains(
     'مرتد|شراء'))].reset_index(drop=True)
 
 buyvaluedf['buying_total'] = np.where(buyvaluedf['invoive_type'].str.contains(
@@ -120,7 +144,7 @@ buyvaluedf['buying_total'] = np.where(buyvaluedf['invoive_type'].str.contains(
 buyvaluedf['quantity_total'] = np.where(buyvaluedf['invoive_type'].str.contains(
     'شراء'), buyvaluedf['quantity'], -buyvaluedf['quantity'])
 
-sellvalue = test[(test['invoive_type'].str.contains(
+sellvalue = goods_movement[(goods_movement['invoive_type'].str.contains(
     'مرتجع|بيع'))].reset_index(drop=True)
 
 "get what you need from the data"
@@ -134,6 +158,10 @@ sellvalue['total_quantity'] = np.where((sellvalue['invoive_type'].str.contains(
     'بيع')), sellvalue['quantity'], -(sellvalue['quantity']))
 
 sellvalue = sellvalue.drop(['tax'], axis=1).reset_index(drop=True)
+
+goods_movem = goods_movement[(goods_movement['invoive_type'].str.contains(
+    'ت.خصم|ت.إضافه|تحويل له|تحويل منه'))].reset_index(drop=True)
+goods_movem.rename(columns={'acc_name': 'store'}, inplace=True)
 
 ##############################
 
@@ -293,8 +321,10 @@ sellvalue = sellvalue.drop(['tax'], axis=1).reset_index(drop=True)
 
 ##############################
 
-
+# Define the list of expected column names should be exist in the file
 expected_cols = ['Acc_cd', 'cboHdr2', 'cboHdrNo2']
+
+# Check if the expected columns are present in the file
 'column should be exist in the file'
 try:
     budget = pd.read_excel(r"D:\result\FILES\New folder (2)\SBaccTriRpt.xls")
@@ -303,6 +333,7 @@ try:
 except Exception as e:
     print('Error:', e)
 
+# Clean and preprocess the budget DataFrame
 budget = (
     budget
     .assign(Acc_cd=lambda x: x['Acc_cd'].replace(r'[^0-9]', np.nan, regex=True))
@@ -311,6 +342,7 @@ budget = (
     .astype({'Acc_cd': 'str'})
 )
 
+# Define the slice ranges for the barcode slicing function
 slices = [(0, 1, 'minat1', 0), 
           (0, 2, 'minat2', 1),
           (0, 3, 'minat3', 2),
@@ -320,29 +352,28 @@ slices = [(0, 1, 'minat1', 0),
           (0, 7, 'minat7', 6),
           (0, 8, 'minat8', 7),
           (0, 9, 'minat9', 8)]
+
+# Slice the barcode values and replace them with the corresponding names
 slice_barcode1(budget, slices, 'Acc_cd')
 
-
-
+# Map the code values to the corresponding names in the budget DataFrame
 cols_to_map = ['minat1', 'minat2', 'minat3', 'minat5', 'minat6', 'minat8']
 codetoname2(budget, budget, 'Acc_cd', 'Acc_nm', cols_to_map)
+fill_non_blank_down2 (budget,['minat1_name', 'minat2_name', 
+                             'minat3_name', 'minat5_name', 
+                             'minat6_name', 'minat8_name'])
 
-fill_non_blank_down(budget, 'minat1_name')
-fill_non_blank_down(budget, 'minat2_name')
-fill_non_blank_down(budget, 'minat3_name')
-fill_non_blank_down(budget, 'minat5_name')
-fill_non_blank_down(budget, 'minat6_name')
-fill_non_blank_down(budget, 'minat8_name')
+# Drop columns with irrelevant indices
+budget.drop(budget.columns[:14], axis=1, inplace=True)
 
-budget.drop(budget.columns[[0, 1, 2, 3, 4, 5, 6, 7,
-            8, 9, 10, 11, 12, 13]], axis=1, inplace=True)
-budget.rename(columns={'DbBal': 'الحركة مدين',
-                       'CrBal': 'الحركة دائن',
-                       'Label113': 'مدين نهاية المدة ',
-                       'Text153': 'مدين أول المدة ',
-                       'Text154': 'دائن اول  المدة ',
-                       'Text161': 'دائن اخر المدة'}, inplace=True)
-
+# Rename remaining columns with more descriptive names
+new_column_names = {'DbBal': 'الحركة مدين',
+                    'CrBal': 'الحركة دائن',
+                    'Label113': 'مدين نهاية المدة',
+                    'Text153': 'مدين أول المدة',
+                    'Text154': 'دائن أول المدة',
+                    'Text161': 'دائن اخر المدة'}
+budget.rename(columns=new_column_names, inplace=True)
 
 ##############################
 
@@ -377,3 +408,4 @@ with pd.ExcelWriter(r"D:\result\result.xlsx", engine="openpyxl") as writer:
     lats_acc_stat.to_excel(writer, sheet_name='lats_acc_stat')
     sellhelper.to_excel(writer, sheet_name='sellhelper')
     store.to_excel(writer, sheet_name='store')
+    goods_movem.to_excel(writer, sheet_name='goods_movem')
