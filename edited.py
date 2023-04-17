@@ -122,46 +122,45 @@ expected_cols=['Acc_Nm','sCst',
                'Text101','sPrc',
                'sQty',	'spkid']
 try:
-    goods_movement = pd.read_excel(r"D:\result\FILES\New folder (2)\SBJRNLITMRPTTAX.xls")
-    if not set(expected_cols).issubset(goods_movement.columns):
+    goods_transection = pd.read_excel(r"D:\result\FILES\New folder (2)\SBJRNLITMRPTTAX.xls")
+    if not set(expected_cols).issubset(goods_transection.columns):
         raise ValueError('The file does not contain the expected columns:', expected_cols)
 except Exception as e:
     print('Error:', e)
 
-"clean the data"
-goods_movement = goods_movement.dropna(axis='columns', how="all")
-goods_movement.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
+goods_transection = goods_transection.dropna(axis='columns', how="all")
+goods_transection.columns = ['Inv_No', 'Inv', 'acc_name', 'cost',
                 'value', 'tax', 'discount', 'unitprice',
                 'quantity', 'type', 'invoive_type',
                 'item_NAME', 'ITEM_CODE', 'INVOICE_T1', 'INVOICE', 'DATE']
 "filter the data"
-buyvaluedf = goods_movement[(goods_movement['invoive_type'].str.contains(
+buying_df = goods_transection[(goods_transection['invoive_type'].str.contains(
     'مرتد|شراء'))].reset_index(drop=True)
 
-buyvaluedf['buying_total'] = np.where(buyvaluedf['invoive_type'].str.contains(
-    'شراء'), buyvaluedf['cost'], -buyvaluedf['value'])
+buying_df['buying_total'] = np.where(buying_df['invoive_type'].str.contains(
+    'شراء'), buying_df['cost'], -buying_df['value'])
 
-buyvaluedf['quantity_total'] = np.where(buyvaluedf['invoive_type'].str.contains(
-    'شراء'), buyvaluedf['quantity'], -buyvaluedf['quantity'])
+buying_df['quantity_total'] = np.where(buying_df['invoive_type'].str.contains(
+    'شراء'), buying_df['quantity'], -buying_df['quantity'])
 
-sellvalue = goods_movement[(goods_movement['invoive_type'].str.contains(
+selling_df = goods_transection[(goods_transection['invoive_type'].str.contains(
     'مرتجع|بيع'))].reset_index(drop=True)
 
 "get what you need from the data"
-sellvalue['gross_profit'] = np.where((sellvalue['invoive_type'].str.contains(
-    'بيع')), sellvalue['value'] - sellvalue['cost'], -(sellvalue['value'] - sellvalue['cost']))
+selling_df['gross_profit'] = np.where((selling_df['invoive_type'].str.contains(
+    'بيع')), selling_df['value'] - selling_df['cost'], -(selling_df['value'] - selling_df['cost']))
 
-sellvalue['gross_sell'] = np.where((sellvalue['invoive_type'].str.contains(
-    'بيع')), sellvalue['value'], -(sellvalue['value']))
+selling_df['gross_sell'] = np.where((selling_df['invoive_type'].str.contains(
+    'بيع')), selling_df['value'], -(selling_df['value']))
 
-sellvalue['total_quantity'] = np.where((sellvalue['invoive_type'].str.contains(
-    'بيع')), sellvalue['quantity'], -(sellvalue['quantity']))
+selling_df['total_quantity'] = np.where((selling_df['invoive_type'].str.contains(
+    'بيع')), selling_df['quantity'], -(selling_df['quantity']))
 
-sellvalue = sellvalue.drop(['tax'], axis=1).reset_index(drop=True)
+selling_df = selling_df.drop(['tax'], axis=1).reset_index(drop=True)
 
-goods_movem = goods_movement[(goods_movement['invoive_type'].str.contains(
+goods_movements_df = goods_transection[(goods_transection['invoive_type'].str.contains(
     'ت.خصم|ت.إضافه|تحويل له|تحويل منه'))].reset_index(drop=True)
-goods_movem.rename(columns={'acc_name': 'store'}, inplace=True)
+goods_movements_df.rename(columns={'acc_name': 'store'}, inplace=True)
 
 ##############################
 
@@ -185,6 +184,9 @@ codetoname(main_clint_df_t4, clints_df, 'acc_cd',
            'acc_nm', 'minat2', 'minat2_name')
 codetoname(main_clint_df_t4, clints_df, 'acc_cd',
            'acc_nm', 'minat3', 'minat3_name')
+main_clint_df_t4['minat3_name'] = main_clint_df_t4['minat3_name'].fillna(main_clint_df_t4['minat2_name'])
+main_clint_df_t4['minat2_name'] = main_clint_df_t4['minat2_name'].fillna(main_clint_df_t4['minat1_name'])
+
 # todo"make somthing in data base it selfe "
 main_clint_df_t4['tax'] = np.where(main_clint_df_t4['minat3'].astype(str).str.contains('123101.*'), 0.08,
                                    np.where(main_clint_df_t4['minat3'].astype(str).str.contains('123104.*'), 0.04,
@@ -213,11 +215,18 @@ def give_name_for_NAN_in_another_col(traget_df, badeling_col, badeling_value, ch
             traget_df.loc[i, changabel_col] = insert_df.loc[j, insert_value]
 
 
+#def fill_column_with_values_conditional(df: pd.DataFrame, target_col: str, condition_col: str, condition_value: any, a,fill_col: str):
+ #   fill_values = df.loc[df[condition_col] == condition_value, [target_col, fill_col]].set_index(target_col)[fill_col]
+  #  df[fill_col] = df[fill_col].fillna(fill_values)
+
+#def fill_column_with_values_conditional(df: pd.DataFrame, target_col: str, condition_col: str, condition_value: any, fill_col: str, fill_df: pd.DataFrame, fill_col_name: str):
+ #   fill_values = fill_df.set_index(target_col)[fill_col_name]
+  #  df.loc[df[condition_col] == condition_value, fill_col] = df.loc[df[condition_col] == condition_value, target_col].map(fill_values)
+#fill_nan_with_values(acc_stat, 'TR_DS', 'ماقبله', 'RACC', clints_df, 'acc_nm')
 give_name_for_NAN_in_another_col(
     acc_stat, 'TR_DS', 'ماقبله', 'RACC', clints_df, 'acc_nm')
 
 
-'replace np.nat with 0'
 acc_stat['tr_dt'] = acc_stat['tr_dt'].replace(np.nan, "30/12/2022 00:00:00")
 
 acc_stat['tr_dt'] = pd.to_datetime(acc_stat['tr_dt'], errors='coerce')
@@ -230,72 +239,78 @@ acc_stat = acc_stat.merge(clints_df, left_on='RACC',
 acc_stat = acc_stat.merge(main_clint_df_t4, left_on='RACC',
                           right_on='acc_nm', how='left', suffixes=('_x', '_y'))
 
-acc_stat['Libra'] = np.where((acc_stat['TR_DS'].astype(str).str.contains(r"مدين|دائن")), acc_stat["tr_dt"].dt.to_period('d').dt.start_time + pd.Timedelta(0, unit='d'),
-                             np.where((acc_stat['max_time'] == 15), acc_stat["tr_dt"].dt.to_period('d').dt.start_time + pd.Timedelta(15, unit='d'),
-                             np.where((acc_stat['max_time'] == 21), acc_stat["tr_dt"].dt.to_period('d').dt.start_time + pd.Timedelta(21, unit='d'),
-                                      np.where((acc_stat['max_time'] == 222),
-                                               acc_stat["tr_dt"].dt.to_period(
-                                          'M').dt.end_time + pd.Timedelta(14, unit='d'),
-                                 np.where((acc_stat['max_time'] == 45),
-                                          acc_stat["tr_dt"].dt.to_period(
-                                     'd').dt.start_time + pd.Timedelta(45, unit='d'),
-                                          np.where((acc_stat['max_time'] == 565),
-                                                   acc_stat["tr_dt"].dt.to_period(
-                                              'M').dt.end_time + pd.Timedelta(0, unit='d'),
-                                     np.where((acc_stat['max_time'] == 3),
-                                              acc_stat["tr_dt"].dt.to_period(
-                                         'd').dt.start_time + pd.Timedelta(3, unit='d'),
-                                              np.where((np.logical_and((acc_stat['max_time'] == 333), (acc_stat['days'] < 15))),
-                                                       acc_stat["tr_dt"].dt.to_period(
-                                                  'M').dt.start_time + pd.Timedelta(21, unit='d'),
-                                         np.where((np.logical_and((acc_stat['max_time'] == 333), (acc_stat['days'] >= 15))),
-                                                  acc_stat["tr_dt"].dt.to_period(
-                                             'M').dt.end_time + pd.Timedelta(7, unit='d'),
-                                                  acc_stat["tr_dt"].dt.to_period(
-                                             'd').dt.start_time + pd.Timedelta(0, unit='d')
-                                              )))))))))
+
+
+def calculate_due_date(tr_date, payment_terms,TR_DS):
+    if TR_DS.find("مرتجع") == -1 or TR_DS.find("بيع") == -1:
+        return tr_date
+    else:
+        if payment_terms == 222:
+            return tr_date.to_period('M').to_timestamp(how='end') + pd.Timedelta(15, unit='d')
+        elif payment_terms == 333:
+            if tr_date.day <= 15:
+                return tr_date.to_period('M').to_timestamp(how='start') + pd.Timedelta(21, unit='d')
+            else:
+                return tr_date.to_period('M').to_timestamp(how='start') + pd.Timedelta(7, unit='d')
+        elif payment_terms == 0:
+            return tr_date
+        elif payment_terms == 3:
+            return tr_date + pd.Timedelta(3, unit='d')
+        elif payment_terms == 15:
+            return tr_date + pd.Timedelta(15, unit='d')
+        elif payment_terms == 45:
+            return tr_date + pd.Timedelta(45, unit='d')
+        elif payment_terms == 565:
+            if tr_date.day <= 21:
+                return tr_date.to_period('M').to_timestamp(how='start') + pd.Timedelta(7, unit='d')
+            else:
+                return tr_date.to_period('M').to_timestamp(how='start') + pd.DateOffset(months=1) + pd.Timedelta(7, unit='d')
+        else:
+            raise ValueError('Unrecognized payment term: {}'.format(payment_terms))
+#TODO: TEST THIS FUNCTION 
+acc_stat['Libra'] = acc_stat.apply(lambda row: calculate_due_date(row['tr_dt'], row['max_time'],row['TR_DS']), axis=1)
 
 
 acc_stat["mov_d"] = acc_stat["mov_d"].fillna(0)
 acc_stat["mov_c"] = acc_stat["mov_c"].fillna(0)
-acc_stat["Total_bal"] = - \
-    (acc_stat["mov_d"]-acc_stat["mov_c"])*(1-acc_stat["tax"])
+acc_stat["Total_bal"] = -(acc_stat["mov_d"]-acc_stat["mov_c"])*(1-acc_stat["tax"])
 
 lats_acc_stat = acc_stat[['RACC', 'tr_dt', "mov_d", "mov_c", "TR_DS", 'Libra', 'max_time',
                           'days', 'tax', 'Total_bal', 'bal_D', "bal_c", "TEXT207", "TEXT208", "Text184"]].copy(deep=False)
 
 
-sellvalue = pd.merge(main_clint_df_t4[['acc_nm', 'tax']], sellvalue,
+selling_df = pd.merge(main_clint_df_t4[['acc_nm', 'tax']], selling_df,
                      left_on='acc_nm', right_on='acc_name', how='right', validate='one_to_many')
-sellvalue = sellvalue.drop(['acc_nm'], axis=1).reset_index(drop=True)
+selling_df = selling_df.drop(['acc_nm'], axis=1).reset_index(drop=True)
 
-sellvalue['net_sell'] = np.where((sellvalue['invoive_type'].str.contains(
-    'بيع')), (sellvalue['value']*(1-sellvalue['tax'])), -(sellvalue['value']*(1-sellvalue['tax'])))
+selling_df['net_sell'] = np.where((selling_df['invoive_type'].str.contains(
+    'بيع')), (selling_df['value']*(1-selling_df['tax'])), -(selling_df['value']*(1-selling_df['tax'])))
 
-sellvalue['net_profit'] = np.where((sellvalue['invoive_type'].str.contains('بيع')), ((
-    sellvalue['value']*(1-sellvalue['tax'])) - sellvalue['cost']),
-      -((sellvalue['value']*(1-sellvalue['tax'])) - sellvalue['cost']))
-sellvalue['Profit Percentage(cost)'] = np.where((sellvalue['invoive_type'].str.contains(
-    'بيع')), (sellvalue['net_profit'] / sellvalue['cost']), -(sellvalue['net_profit'] / sellvalue['cost']))
-sellvalue['Profit Percentage(value)'] = np.where((sellvalue['invoive_type'].str.contains(
-    'بيع')), (sellvalue['net_profit'] / sellvalue['value']), -(sellvalue['net_profit'] / sellvalue['value']))
+selling_df['net_profit'] = np.where((selling_df['invoive_type'].str.contains('بيع')), ((
+    selling_df['value']*(1-selling_df['tax'])) - selling_df['cost']),
+      -((selling_df['value']*(1-selling_df['tax'])) - selling_df['cost']))
+selling_df['Profit Percentage(cost)'] = np.where((selling_df['invoive_type'].str.contains(
+    'بيع')), (selling_df['net_profit'] / selling_df['cost']), -(selling_df['net_profit'] / selling_df['cost']))
+selling_df['Profit Percentage(value)'] = np.where((selling_df['invoive_type'].str.contains(
+    'بيع')), (selling_df['net_profit'] / selling_df['value']), -(selling_df['net_profit'] / selling_df['value']))
 
 
 helprt_acc = [lats_acc_stat['TR_DS'] .str.contains('مرتجع|بيع')]
 helprt_acc = lats_acc_stat.groupby(['RACC', 'Libra', 'tr_dt'])[
     'Total_bal'].sum().reset_index()
 
-sellhelper = sellvalue['DATE'].agg(['min', 'max'])
-sellhelper["# of days"] = (
+sellhelper = acc_stat['tr_dt'].agg(['min', 'max'])
+sellhelper["Days Elapsed"] = (
     sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'D')
-sellhelper["# of weeks"] = (
+sellhelper["Weeks Elapsed"] = (
     sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'W')
-sellhelper["# of months"] = (
+sellhelper["Months Elapsed"] = (
     sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'M')
-sellhelper["#3 of months"] = (
+sellhelper["Quarterly Intervals Elapsed"] = (
     sellhelper["max"] - sellhelper["min"]) / np.timedelta64(3, 'M')
+sellhelper.columns = ['Earliest Date', 'Latest Date']
 
-##############################
+#################################################################################################################
 
 
 all_item = pd.read_excel(r"D:\result\FILES\New folder (2)\Sbitmsmfrpt_ORG.xls")
@@ -317,7 +332,7 @@ codetoname(item_with_det, all_item, 'itm_cd',
 ##############################
 
 
-sellvalue = sellvalue.drop(['tax'], axis=1).reset_index(drop=True)
+selling_df = selling_df.drop(['tax'], axis=1).reset_index(drop=True)
 
 ##############################
 
@@ -375,7 +390,7 @@ new_column_names = {'DbBal': 'الحركة مدين',
                     'Text161': 'دائن اخر المدة'}
 budget.rename(columns=new_column_names, inplace=True)
 
-##############################
+#####################################################################################################################
 
 store = pd.read_excel(r"D:\result\FILES\New folder (2)\SBINQALLRPT_CTRL.xls")
 store['itm_cd'] = store['itm_cd'].replace(
@@ -401,11 +416,11 @@ fill_non_blank_down(store, 'itm_cd')
 
 with pd.ExcelWriter(r"D:\result\result.xlsx", engine="openpyxl") as writer:
     item_with_det.to_excel(writer, sheet_name='items_base')
-    buyvaluedf.to_excel(writer, sheet_name='buyvaluedf')
-    sellvalue.to_excel(writer, sheet_name='sellvalue')
+    buying_df.to_excel(writer, sheet_name='buyvaluedf')
+    selling_df.to_excel(writer, sheet_name='sellvalue')
     main_clint_df_t4.to_excel(writer, sheet_name='clint_database')
     budget.to_excel(writer, sheet_name='budget')
     lats_acc_stat.to_excel(writer, sheet_name='lats_acc_stat')
     sellhelper.to_excel(writer, sheet_name='sellhelper')
     store.to_excel(writer, sheet_name='store')
-    goods_movem.to_excel(writer, sheet_name='goods_movem')
+    goods_movements_df.to_excel(writer, sheet_name='goods_movem')
