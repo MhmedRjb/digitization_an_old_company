@@ -1,5 +1,11 @@
 import numpy as np
 import pandas as pd
+import timeit
+
+start_time = timeit.default_timer()
+
+# Your code here
+
 
 
 def add_left_zero(df, codel_col):
@@ -45,22 +51,7 @@ def fill_non_blank_down(df, column):
 
     df[column] = df[column].fillna(method='ffill')
     return df
-def fill_non_blank_down2(df, columns):
-    """
-    Fill NaN values in the specified columns with the previous non-NaN value in the same column.
 
-    Args:
-        df: A pandas dataframe.
-        columns: A list of column names to fill.
-
-    Returns:
-        The modified dataframe.
-    """
-
-    for column in columns:
-        df[column] = df[column].fillna(method='ffill')
-        
-    return df
 def codetoname(target_df, translatr_df, DIC_KEY, DIC_value, traget_code_col, new_name_col, default_name=np.NAN):
     """
     Map codes to names in a pandas dataframe using a translation table.
@@ -201,7 +192,7 @@ clints_df.columns = ['index', 'empty1', 'empty2', 'code', 'acc_nm', 'mony_forus'
 clints_df["max_time"] = clints_df["max_time"].astype("int32")
 
 acc_stat = pd.read_excel(r"D:\result\FILES\New folder (2)\SBACCRPTA4.xls")
-acc_stat.drop(['Text139', 'نص204'], axis=1)
+acc_stat.drop(['Text139', 'نص204'], axis=1,inplace=True)
 clints_df['acc_nm'] = clints_df['acc_nm'].fillna(0)
 
 
@@ -215,16 +206,10 @@ def give_name_for_NAN_in_another_col(traget_df, badeling_col, badeling_value, ch
             traget_df.loc[i, changabel_col] = insert_df.loc[j, insert_value]
 
 
-#def fill_column_with_values_conditional(df: pd.DataFrame, target_col: str, condition_col: str, condition_value: any, a,fill_col: str):
- #   fill_values = df.loc[df[condition_col] == condition_value, [target_col, fill_col]].set_index(target_col)[fill_col]
-  #  df[fill_col] = df[fill_col].fillna(fill_values)
-
-#def fill_column_with_values_conditional(df: pd.DataFrame, target_col: str, condition_col: str, condition_value: any, fill_col: str, fill_df: pd.DataFrame, fill_col_name: str):
- #   fill_values = fill_df.set_index(target_col)[fill_col_name]
-  #  df.loc[df[condition_col] == condition_value, fill_col] = df.loc[df[condition_col] == condition_value, target_col].map(fill_values)
-#fill_nan_with_values(acc_stat, 'TR_DS', 'ماقبله', 'RACC', clints_df, 'acc_nm')
 give_name_for_NAN_in_another_col(
     acc_stat, 'TR_DS', 'ماقبله', 'RACC', clints_df, 'acc_nm')
+
+
 
 
 acc_stat['tr_dt'] = acc_stat['tr_dt'].replace(np.nan, "30/12/2022 00:00:00")
@@ -274,10 +259,8 @@ acc_stat['Libra'] = acc_stat.apply(lambda row: calculate_due_date(row['tr_dt'], 
 acc_stat["mov_d"] = acc_stat["mov_d"].fillna(0)
 acc_stat["mov_c"] = acc_stat["mov_c"].fillna(0)
 acc_stat["Total_bal"] = -(acc_stat["mov_d"]-acc_stat["mov_c"])*(1-acc_stat["tax"])
-
 lats_acc_stat = acc_stat[['RACC', 'tr_dt', "mov_d", "mov_c", "TR_DS", 'Libra', 'max_time',
                           'days', 'tax', 'Total_bal', 'bal_D', "bal_c", "TEXT207", "TEXT208", "Text184"]].copy(deep=False)
-
 
 selling_df = pd.merge(main_clint_df_t4[['acc_nm', 'tax']], selling_df,
                      left_on='acc_nm', right_on='acc_name', how='right', validate='one_to_many')
@@ -308,7 +291,6 @@ sellhelper["Months Elapsed"] = (
     sellhelper["max"] - sellhelper["min"]) / np.timedelta64(1, 'M')
 sellhelper["Quarterly Intervals Elapsed"] = (
     sellhelper["max"] - sellhelper["min"]) / np.timedelta64(3, 'M')
-sellhelper.columns = ['Earliest Date', 'Latest Date']
 
 #################################################################################################################
 
@@ -374,7 +356,7 @@ slice_barcode1(budget, slices, 'Acc_cd')
 # Map the code values to the corresponding names in the budget DataFrame
 cols_to_map = ['minat1', 'minat2', 'minat3', 'minat5', 'minat6', 'minat8']
 codetoname2(budget, budget, 'Acc_cd', 'Acc_nm', cols_to_map)
-fill_non_blank_down2 (budget,['minat1_name', 'minat2_name', 
+fill_non_blank_down (budget,['minat1_name', 'minat2_name', 
                              'minat3_name', 'minat5_name', 
                              'minat6_name', 'minat8_name'])
 
@@ -393,8 +375,8 @@ budget.rename(columns=new_column_names, inplace=True)
 #####################################################################################################################
 
 store = pd.read_excel(r"D:\result\FILES\New folder (2)\SBINQALLRPT_CTRL.xls")
-store['itm_cd'] = store['itm_cd'].replace(
-    r'[^0-9]', np.nan, regex=True).reset_index(drop=True)
+
+store['itm_cd'] = store['itm_cd'].replace(r'[^0-9]', np.nan, regex=True).reset_index(drop=True)
 store = store.drop('Text25', axis=1)
 
 store.rename(columns={'sBal': 'الرصيد عدد',
@@ -424,3 +406,8 @@ with pd.ExcelWriter(r"D:\result\result.xlsx", engine="openpyxl") as writer:
     sellhelper.to_excel(writer, sheet_name='sellhelper')
     store.to_excel(writer, sheet_name='store')
     goods_movements_df.to_excel(writer, sheet_name='goods_movem')
+
+
+    end_time = timeit.default_timer()
+
+print("Execution time:", end_time - start_time)
