@@ -191,6 +191,7 @@ clints_df.columns = ['index', 'empty1', 'empty2', 'code', 'acc_nm', 'mony_forus'
 
 clints_df["max_time"] = clints_df["max_time"].astype("int32")
 
+
 acc_stat = pd.read_excel(r"D:\result\FILES\New folder (2)\SBACCRPTA4.xls")
 acc_stat.drop(['Text139', 'نص204'], axis=1,inplace=True)
 clints_df['acc_nm'] = clints_df['acc_nm'].fillna(0)
@@ -227,7 +228,7 @@ acc_stat = acc_stat.merge(main_clint_df_t4, left_on='RACC',
 
 
 def calculate_due_date(tr_date, payment_terms,TR_DS):
-    if TR_DS.find("مرتجع") == -1 or TR_DS.find("بيع") == -1:
+    if TR_DS.find("دائن") == 1 or TR_DS.find("مدين") == 1:
         return tr_date
     else:
         if payment_terms == 222:
@@ -395,6 +396,35 @@ fill_non_blank_down(store, 'ITM_NM')
 fill_non_blank_down(store, 'itm_cd')
 
 ##############################
+budget_detailed = pd.read_excel(r"D:\result\FILES\New folder (2)\SBOthAccRpt.xls")
+budget_names = pd.read_excel(r"D:\result\FILES\New folder (2)\Sbaccmfrpt_BRF - Copy.xls")
+
+give_name_for_NAN_in_another_col(budget_detailed, 'TR_DS', 'ماقبله', 'RACC', budget_names, 'acc_nm')
+budget_detailed['tr_dt'] = budget_detailed['tr_dt'].replace(np.nan, "30/12/2022 00:00:00")
+budget_detailed.rename(columns={'bal_D': 'الرصيد منه',
+                      'bal_c': 'الرصيد له',
+                      'mov_d': 'الحركة منه',
+                      'mov_c': 'الحركة له',
+                      }, inplace=True)
+#make a new dataframe by drop rows in budget if minst3 is العملاءor الموردينor البنوك or الخزينة or اوراق قبض or اوراق دفع
+budgetMainName=budget.drop (budget[(budget['minat3_name']=='العملاء')|(budget['minat3_name']=='الموردين')|(budget['minat3_name']=='البنوك')|(budget['minat3_name']=='الخزينه')|(budget['minat3_name']=='اوراق قبض')|(budget['minat3_name']=='اوراق دفع')].index)
+#reset index
+budgetMainName.reset_index(drop=True, inplace=True)
+#drop 
+
+
+bank_det = pd.read_excel(r"D:\result\FILES\New folder (2)\SBCshRpt.xls")
+bank_names = pd.read_excel(r"D:\result\FILES\New folder (2)\Sbaccmfrpt_BRF.xls")
+give_name_for_NAN_in_another_col(bank_det, 'mov_nm', 'ماقبله', 'Text66', bank_names, 'acc_nm')
+bank_det['tr_dt']=bank_det['tr_dt'].replace(np.nan, "30/12/2022 00:00:00")
+bank_det.rename(columns={'bal': 'الرصيد',
+                        'inqty': 'مدين',
+                        'outqty': 'دائن',
+                        }, inplace=True)
+
+
+
+##################################
 
 with pd.ExcelWriter(r"D:\result\result.xlsx", engine="openpyxl") as writer:
     item_with_det.to_excel(writer, sheet_name='items_base')
@@ -406,6 +436,9 @@ with pd.ExcelWriter(r"D:\result\result.xlsx", engine="openpyxl") as writer:
     sellhelper.to_excel(writer, sheet_name='sellhelper')
     store.to_excel(writer, sheet_name='store')
     goods_movements_df.to_excel(writer, sheet_name='goods_movem')
+    budget_detailed.to_excel(writer, sheet_name='budget_detailed')
+    bank_det.to_excel(writer, sheet_name='bank_det')
+    budgetMainName.to_excel(writer, sheet_name='budgetMainName')
 
 
     end_time = timeit.default_timer()
