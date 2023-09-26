@@ -1,10 +1,16 @@
 <img src="https://devstickers.com/assets/img/pro/kjyz.png"  >
 
-> I was thrilled to see that my first useful program. It helped the company make better decisions more quickly, which was a great feeling. 
+- I was thrilled to see that my first useful program. It helped the company make better decisions more quickly, which was a great feeling. 
 I learned how to manipulate data using __Python__ and visualize it using __Power BI__ . I'm excited to continue learning and growing as a developer.
-However, I made a few mistakes when I was writing the code. I didn't know any better at the time, but I was just trying to__get it working__. I didn't 
-think about things like __readability__, __maintainability__, or __scalability__. As a result, my code was a bit of a spaghetti. It was hard to understand, 
-and it was even harder to change. I'm glad that I made the mistake of writing messy code. It taught me a __valuable lesson__ that I'll never forget.
+
+- However, I made a few **mistakes** when I was writing the code. 
+I didn't know any better at the time, but I was just trying to __get it working__. 
+I didn't think about things like __readability__, __maintainability__, or __scalability__.
+
+- As a result, my code was a bit of a spaghetti. 
+It was hard to **understand**, 
+and it was even harder to **change**. 
+I'm glad that I made the mistake of writing **messy code**. It taught me a __valuable lesson__ that I'll never forget.
 
 The last thing I will do in this project is to make it structured, clean, and object-oriented and shareing Visualization with you after Hideing company information .
 
