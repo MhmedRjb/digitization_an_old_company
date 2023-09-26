@@ -72,3 +72,9 @@ collect the data using the selenium library, clean and handle it by pandas libra
   - [ ] calcualte turnover item in power bi 
 ### 3.
 - [ ] connect Bank account with the main program
+
+
+
+![image](https://github.com/MhmedRjb/digitization_an_old_company/assets/72052305/74a3934b-d0f5-4feb-8b34-5346a31978db)
+
+![image](https://github.com/MhmedRjb/digitization_an_old_company/assets/72052305/5df5f95c-8dd2-4b5a-ba16-58770f50db98)
