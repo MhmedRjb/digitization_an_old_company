@@ -1,4 +1,3 @@
-<img src="https://devstickers.com/assets/img/pro/kjyz.png"  >
 
 - I was thrilled to see that my first useful program. It helped the company make better decisions more quickly, which was a great feeling. 
 I learned how to manipulate data using __Python__ and visualize it using __Power BI__ . I'm excited to continue learning and growing as a developer.
@@ -17,14 +16,10 @@ The last thing I will do in this project is to make it structured, clean, and ob
 # digitization_an_old_company
 this repository collect data from different  sources (desktop app, WhatsApp messages, pdfs from emails ) 
 and handle it to be useful and understandable in one place
-## and the winter is totally coming
 by using 
 - python 
   - pandas :heavy_check_mark:
   - numby  :heavy_check_mark:
-  - seaborn
-  - selenium
-- SQL 
 - Power BI :heavy_check_mark:
 ## this project has three steps
 ### 1. collect the data from the ERP application 
@@ -43,7 +38,6 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - calls 
 
 
-# :snowflake: and the winter is  coming
 
 
 ## steps
@@ -56,18 +50,12 @@ collect the data using the selenium library, clean and handle it by pandas libra
 - [x] :metal:	 setalment and transfers  
 - [x] clean clint_df file 
 - [x] clean item_df file 
-  - [ ] :timer_clock: optimize item_df code 
 - [x] clean inventory file
 - [x]:timer_clock: merge budget&acc_statment in one table 
 - [x] remove most if else from code and make data genrate what is lost
 
+
 #### 1.2
-
-- [ ] automat extraxt files 
-  - [ ] :timer_clock: check library  
-- [ ] :dizzy:	automat Data entery from files
-
-#### 1.3
 - [x] Visualize the data
   - [x] Visualize data in Power BI
     - [x] Visualize data inventory in Power BI
